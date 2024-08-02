@@ -1,0 +1,6 @@
+
+*.vsidx
+*.v2
+/ConnectFour.Tests/.vs
+/ConnectFour.Tests/bin
+/ConnectFour.Tests/obj
