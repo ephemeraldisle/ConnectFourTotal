@@ -1,6 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ConnectFour;
-using System;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ConnectFour.Tests
 {
@@ -14,7 +13,7 @@ namespace ConnectFour.Tests
         public void Setup()
         {
             _ai = new AI(new Random(42)); // Use a fixed seed for reproducibility
-            _ai.Difficulty = 10;          // Set to maximum difficulty for most tests
+            _ai.Difficulty = 10;
             _board = new Board();
         }
 
@@ -76,7 +75,7 @@ namespace ConnectFour.Tests
             _board.MakeMove(Board.PlayerState.Player1, 1);
             _board.MakeMove(Board.PlayerState.Player1, 2);
 
-            int threats = _ai.CountThreats(_board, Board.PlayerState.Player1);
+            int threats = AI.CountThreats(_board, Board.PlayerState.Player1);
             Assert.AreEqual(AI.SingleEndedThreatValue, threats, "Three in a row should be counted as a single-ended threat");
         }
 
@@ -87,7 +86,7 @@ namespace ConnectFour.Tests
             _board.MakeMove(Board.PlayerState.Player1, 1);
             _board.MakeMove(Board.PlayerState.Player1, 2);
 
-            int threat = _ai.EvaluateDirection(_board, 0, 0, 0, 1, Board.PlayerState.Player1);
+            int threat = AI.EvaluateDirection(_board, 0, 0, 0, 1, Board.PlayerState.Player1);
             Assert.AreEqual(AI.SingleEndedThreatValue, threat, "Three in a row should be evaluated as a single-ended threat");
         }
 
@@ -124,18 +123,16 @@ namespace ConnectFour.Tests
         {
             _ai.Difficulty = 7;
             Assert.AreEqual(7, _ai.Difficulty);
-            // You might also want to test _difficultyModifier and _errorMaximum,
-            // but you'd need to make these fields public or add public getters for testing
         }
 
 
         [TestMethod]
         public void GetBestMove_ConsistentWithSeed()
         {
-            AI ai1 = new AI(new Random(42));
-            AI ai2 = new AI(new Random(42));
+            AI ai1 = new(new Random(42));
+            AI ai2 = new(new Random(42));
 
-            Board board = new Board();
+            Board board = new();
             board.MakeMove(Board.PlayerState.Player1, 3);
             board.MakeMove(Board.PlayerState.Player2, 3);
 
@@ -148,10 +145,10 @@ namespace ConnectFour.Tests
         [TestMethod]
         public void GetBestMove_DifferentWithDifferentSeeds()
         {
-            AI ai1 = new AI(new Random(42));
-            AI ai2 = new AI(new Random(43));
+            AI ai1 = new(new Random(42));
+            AI ai2 = new(new Random(43));
 
-            Board board = new Board();
+            Board board = new();
             board.MakeMove(Board.PlayerState.Player1, 3);
             board.MakeMove(Board.PlayerState.Player2, 3);
             board.MakeMove(Board.PlayerState.Player1, 2);
@@ -169,14 +166,13 @@ namespace ConnectFour.Tests
         }
 
 
-
         [TestMethod]
         public void Difficulty_AffectsDecisionMaking()
         {
-            AI easyAI = new AI(new Random(42)) { Difficulty = -10 };
-            AI hardAI = new AI(new Random(42)) { Difficulty = 10 };
+            AI easyAI = new(new Random(42)) { Difficulty = -10 };
+            AI hardAI = new(new Random(42)) { Difficulty = 10 };
 
-            Board board = new Board();
+            Board board = new();
             // Set up a board state where there's a clear best move, but also a tempting center move
             board.MakeMove(Board.PlayerState.Player1, 0);
             board.MakeMove(Board.PlayerState.Player1, 0);

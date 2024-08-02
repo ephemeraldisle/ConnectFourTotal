@@ -14,26 +14,30 @@ namespace ConnectFour
 
         private HashSet<(int row, int col)> _winningPositions = [];
 
-        public enum PlayerState { Empty, Player1, Player2 }
+        public enum PlayerState
+        {
+            Empty,
+            Player1,
+            Player2,
+        }
 
         public const int Width = 7;
         public const int Height = 6;
-
         public const int WinningLength = 4;
+
         private const int InitialAnimationFrameTime = 150;
         private const double AnimationFrameGravity = 9.8;
         private const int AnimationStartRow = 10;
         private const int AnimationStartColumnOffset = 8;
         private const int GridCellSize = 4;
 
-        public static readonly (int rowDirection, int columnDirection)[] DirectionsToCheck =
+        public readonly static (int rowDirection, int columnDirection)[] DirectionsToCheck =
         [
-            (1, 0),  // Vertical
-            (0, 1),  // Horizontal 
-            (1, 1),  // Diagonal \
-            (1, -1),  // Diagonal /
+            (1, 0), // Vertical
+            (0, 1), // Horizontal 
+            (1, 1), // Diagonal \
+            (1, -1), // Diagonal /
         ];
-
 
         private readonly PlayerState[,] _boardState = new PlayerState[Height, Width];
         private readonly int[] _columnHeights = new int[Width];
@@ -54,6 +58,7 @@ namespace ConnectFour
         private void SetSpace(int row, int column, PlayerState newState)
         {
             if (!IsValidPosition(row, column)) throw new ArgumentOutOfRangeException(nameof(row));
+
             _boardState[row, column] = newState;
         }
 
@@ -109,29 +114,25 @@ namespace ConnectFour
             };
 
             int steps = Math.Min(rowMaxSteps, columnMaxSteps);
-            
+
             int row = placedRow - steps * rowDirection;
             int column = placedColumn - steps * columnDirection;
 
-
             while (IsValidPosition(row, column))
             {
-
                 if (_boardState[row, column] == player)
                 {
                     count++;
                     currentStreak.Add((row, column));
                     maxCount = Math.Max(count, maxCount);
 
-                        if (maxCount >= WinningLength)
-                        {
-                            _winningPositions.UnionWith(currentStreak);
-                        }
-                    
+                    if (maxCount >= WinningLength)
+                        _winningPositions.UnionWith(currentStreak);
                 }
                 else
                 {
-                    if (NotEnoughStepsLeftForVictory(rowDirection, columnDirection, row, column)) break;
+                    if (NotEnoughStepsLeftForVictory(rowDirection, columnDirection, row, column))
+                        break;
 
                     count = 0;
                     currentStreak.Clear();
@@ -139,8 +140,6 @@ namespace ConnectFour
 
                 row += rowDirection;
                 column += columnDirection;
-
-
             }
 
             return maxCount;
@@ -148,15 +147,14 @@ namespace ConnectFour
 
         private static bool NotEnoughStepsLeftForVictory(int rowDirection, int columnDirection, int row, int column)
         {
-            int remainingRows = rowDirection == 0 ? int.MaxValue : (rowDirection > 0 ? Height - 1 - row : row);
-            int remainingColumns = columnDirection == 0 ? int.MaxValue : (columnDirection > 0 ? Width - 1 - column : column);
+            int remainingRows = rowDirection == 0 ? int.MaxValue : rowDirection > 0 ? Height - 1 - row : row;
+            int remainingColumns = columnDirection == 0 ? int.MaxValue : columnDirection > 0 ? Width - 1 - column : column;
             int remainingSpaces = Math.Min(remainingRows, remainingColumns) + 1;
 
             return remainingSpaces < WinningLength;
         }
 
         public bool IsFull() => _columnHeights.All(height => height == Height);
-
 
         public Board Clone()
         {
@@ -171,7 +169,10 @@ namespace ConnectFour
             StringBuilder sb = new(Width * Height);
             for (int row = 0; row < Height; row++)
             {
-                for (int column = 0; column < Width; column++) sb.Append((int)_boardState[row, column]);
+                for (int column = 0; column < Width; column++)
+                {
+                    sb.Append((int)_boardState[row, column]);
+                }
             }
 
             return sb.ToString();
@@ -182,13 +183,12 @@ namespace ConnectFour
         {
             int row = GetColumnHeight(column);
 
-            int columnPosition = AnimationStartColumnOffset + (column * GridCellSize);
+            int columnPosition = AnimationStartColumnOffset + column * GridCellSize;
 
             string pieceChar = GetSpaceStateCharacter(player);
             ConsoleColor pieceColor = player == PlayerState.Player1 ? Player1Color : Player2Color;
 
-
-            for (int i = AnimationStartRow; i < ((AnimationStartRow + Height) - row); i++)
+            for (int i = AnimationStartRow; i < AnimationStartRow + Height - row; i++)
             {
                 Console.SetCursorPosition(columnPosition, i);
                 Console.Write(" ");
@@ -196,7 +196,7 @@ namespace ConnectFour
                 Console.SetCursorPosition(columnPosition, i + 1);
                 ConsoleUtil.WriteWithColor(pieceChar, pieceColor);
 
-                double adjustedFrameTime = InitialAnimationFrameTime - (AnimationFrameGravity * i);
+                double adjustedFrameTime = InitialAnimationFrameTime - AnimationFrameGravity * i;
                 Thread.Sleep(Math.Max(1, (int)adjustedFrameTime));
             }
 
@@ -222,19 +222,24 @@ namespace ConnectFour
             DisplayBoardHeader();
             Console.Write("        ");
             for (int i = 0; i < Width; i++)
+            {
                 ConsoleUtil.WriteWithColor("↓   ", i != lastAIColumn ? Player1Color : Player2Color);
+            }
 
             Console.WriteLine("\n");
 
             for (int i = 0; i < Height; i++)
             {
                 //Build the outside of the board frame.
-                ConsoleUtil.WriteWithColor(i == (Height - 1) ? "   ┌  |" : "      |", BoardColor);
+                ConsoleUtil.WriteWithColor(i == Height - 1 ? "   ┌  |" : "      |", BoardColor);
 
                 //Fill out all the grid spaces within the board.
-                for (int j = 0; j < Width; j++) FillGridSpace(i, j);
+                for (int j = 0; j < Width; j++)
+                {
+                    FillGridSpace(i, j);
+                }
 
-                if (i == (Height - 1)) ConsoleUtil.WriteWithColor("  ┐", BoardColor);
+                if (i == Height - 1) ConsoleUtil.WriteWithColor("  ┐", BoardColor);
 
                 Console.WriteLine();
             }
@@ -270,7 +275,6 @@ namespace ConnectFour
                 _                   => BoardColor,
             };
         }
-
 
         private string GetSpaceStateCharacter(PlayerState state)
         {

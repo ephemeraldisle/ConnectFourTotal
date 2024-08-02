@@ -1,5 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ConnectFour.Tests
 {
@@ -149,17 +149,16 @@ namespace ConnectFour.Tests
         [TestMethod]
         public void CheckVictory_WinInMiddle_ReturnsTrue()
         {
-            // Setup: [2,1,0,0,0,0][2,1,2,1,2,0][1,2,1,2,2,2][1,2,1,1,2,0][1,1,2,1,2,0][2,1,1,0,0,0][0,0,0,0,0,0]
-            int[][] setup = new int[][]
-            {
-                new int[] {2, 1, 0, 0, 0, 0},
-                new int[] {2, 1, 2, 1, 2, 0},
-                new int[] {1, 2, 1, 2, 2, 2},
-                new int[] {1, 2, 1, 1, 2, 0},
-                new int[] {1, 1, 2, 1, 0, 0},
-                new int[] {2, 1, 1, 0, 0, 0},
-                new int[] {0, 0, 0, 0, 0, 0}
-            };
+            int[][] setup =
+            [
+                [2, 1, 0, 0, 0, 0],
+                [2, 1, 2, 1, 2, 0],
+                [1, 2, 1, 2, 2, 2],
+                [1, 2, 1, 1, 2, 0],
+                [1, 1, 2, 1, 0, 0],
+                [2, 1, 1, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0],
+            ];
 
             for (int col = 0; col < Board.Width; col++)
             {

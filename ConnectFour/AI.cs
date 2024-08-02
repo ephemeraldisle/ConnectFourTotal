@@ -1,10 +1,5 @@
 ﻿namespace ConnectFour
 {
-
-    /*#TODO :
-     1. Clean up input/input clean up :P
-     */
-
     public class AI
     {
         public const int MinimumDifficulty = 1;
@@ -34,13 +29,13 @@
             {
                 _difficulty = value;
                 _difficultyModifier = value * 0.1;
-                _errorMaximum = 102 - (_difficulty * 10);
+                _errorMaximum = 102 - _difficulty * 10;
                 _transpositionTable.Clear();
             }
         }
 
-        private readonly int[] _standardColumnOrder = [3, 2, 4, 1, 5, 0, 6];
-        private readonly int[] _alternateColumnOrder = [3, 4, 2, 5, 1, 6, 0];
+        private readonly static int[] StandardColumnOrder = [3, 2, 4, 1, 5, 0, 6];
+        private readonly static int[] AlternateColumnOrder = [3, 4, 2, 5, 1, 6, 0];
         private readonly Dictionary<string, int> _transpositionTable = new();
 
 
@@ -57,7 +52,7 @@
             int bestScore = int.MinValue;
 
             //By varying which order moves are checked, slightly, should lead to more varied play.
-            int[] orderToUse = _random.Next(0, 2) == 0 ? _standardColumnOrder : _alternateColumnOrder;
+            int[] orderToUse = _random.Next(0, 2) == 0 ? StandardColumnOrder : AlternateColumnOrder;
 
             foreach (int column in orderToUse)
             {
@@ -94,7 +89,7 @@
             int maxScore = int.MinValue;
 
             //By randomly picking between two equally optimal orders to check in, should introduce additional variety to the play.
-            int[] orderToUse = _random.Next(0, 2) == 0 ? _standardColumnOrder : _alternateColumnOrder;
+            int[] orderToUse = _random.Next(0, 2) == 0 ? StandardColumnOrder : AlternateColumnOrder;
             foreach (int column in orderToUse)
             {
                 if (!board.CanMakeMove(column)) continue;
@@ -121,16 +116,14 @@
         {
             int score = 0;
             Board.PlayerState opponent = GetOpponent(player);
-            
+
             //Adjusts how much the weights matter in evaluating the board position based on difficulty - lower difficulty takes them less into effect.
             double weightModifier = 0.5 + _difficultyModifier;
-
 
             score += (int)(CountThreats(board, player) * (PlayerThreatWeight * weightModifier));
             score -= (int)(CountThreats(board, opponent) * (OpponentThreatWeight * weightModifier));
             score += (int)(CountCenterControl(board, player) * (PlayerCenterWeight * weightModifier));
             score -= (int)(CountCenterControl(board, opponent) * (OpponentCenterWeight * weightModifier));
-
 
             //Randomly fails at score analysis, introducing errors at lower difficulty levels.
             if (Difficulty < MaximumDifficulty)
@@ -142,7 +135,7 @@
             return score;
         }
 
-        public int CountThreats(Board board, Board.PlayerState player)
+        public static int CountThreats(Board board, Board.PlayerState player)
         {
             int threats = 0;
 
@@ -153,9 +146,9 @@
             }
 
             // Vertical threats
-            for (int col = 0; col < Board.Width; col++)
+            for (int column = 0; column < Board.Width; column++)
             {
-                threats += EvaluateDirection(board, 0, col, 1, 0, player);
+                threats += EvaluateDirection(board, 0, column, 1, 0, player);
             }
 
             // Diagonal threats (/)
@@ -163,9 +156,10 @@
             {
                 threats += EvaluateDirection(board, row, 0, 1, 1, player);
             }
-            for (int col = 1; col < Board.Width - 3; col++)
+
+            for (int column = 1; column < Board.Width - 3; column++)
             {
-                threats += EvaluateDirection(board, 0, col, 1, 1, player);
+                threats += EvaluateDirection(board, 0, column, 1, 1, player);
             }
 
             // Diagonal threats (\)
@@ -173,15 +167,17 @@
             {
                 threats += EvaluateDirection(board, row, 0, -1, 1, player);
             }
-            for (int col = 1; col < Board.Width - 3; col++)
+
+            for (int column = 1; column < Board.Width - 3; column++)
             {
-                threats += EvaluateDirection(board, Board.Height - 1, col, -1, 1, player);
+                threats += EvaluateDirection(board, Board.Height - 1, column, -1, 1, player);
             }
 
             return threats;
         }
 
-        public int EvaluateDirection(Board board, int startRow, int startColumn, int rowDirection, int columnDirection, Board.PlayerState player)
+        public static int EvaluateDirection(Board board, int startRow, int startColumn, int rowDirection, int columnDirection,
+            Board.PlayerState player)
         {
             int threats = 0;
             int consecutive = 0;
@@ -190,6 +186,7 @@
 
             int row = startRow;
             int column = startColumn;
+
             while (Board.IsValidPosition(row, column))
             {
                 Board.PlayerState currentState = board.GetSpace(row, column);
@@ -216,9 +213,8 @@
                 else // Opponent's piece
                 {
                     if (consecutive > 0)
-                    {
                         threats += EvaluateConsecutive(consecutive, emptyBefore, emptyAfter);
-                    }
+
                     emptyBefore = 0;
                     emptyAfter = 0;
                     consecutive = 0;
@@ -229,9 +225,7 @@
             }
 
             if (consecutive > 0)
-            {
                 threats += EvaluateConsecutive(consecutive, emptyBefore, emptyAfter);
-            }
 
             return threats;
         }

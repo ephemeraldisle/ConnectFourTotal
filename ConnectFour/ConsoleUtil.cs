@@ -4,7 +4,7 @@
     {
         public static void WriteLineWithColor(string text, ConsoleColor color)
         {
-            WriteWithColor(text + "\n", color);
+            WriteWithColor($"{text}\n", color);
         }
 
         public static void WriteWithColor(string text, ConsoleColor color)
@@ -49,5 +49,5 @@
 
     }
 
-    
+
 }
