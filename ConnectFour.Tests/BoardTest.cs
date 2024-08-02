@@ -36,10 +36,7 @@ namespace ConnectFour.Tests
             // Fill the board
             for (int col = 0; col < Board.Width; col++)
             {
-                for (int row = 0; row < Board.Height; row++)
-                {
-                    _board.MakeMove(Board.PlayerState.Player1, col);
-                }
+                for (int row = 0; row < Board.Height; row++) _board.MakeMove(Board.PlayerState.Player1, col);
             }
 
             _board.ResetBoardState();
@@ -47,9 +44,7 @@ namespace ConnectFour.Tests
             for (int row = 0; row < Board.Height; row++)
             {
                 for (int col = 0; col < Board.Width; col++)
-                {
                     Assert.AreEqual(Board.PlayerState.Empty, _board.GetSpace(row, col));
-                }
             }
         }
 
@@ -79,10 +74,7 @@ namespace ConnectFour.Tests
         [TestMethod]
         public void CanMakeMove_FullColumn_ReturnsFalse()
         {
-            for (int i = 0; i < Board.Height; i++)
-            {
-                _board.MakeMove(Board.PlayerState.Player1, 0);
-            }
+            for (int i = 0; i < Board.Height; i++) _board.MakeMove(Board.PlayerState.Player1, 0);
             Assert.IsFalse(_board.CanMakeMove(0));
         }
 
@@ -98,30 +90,21 @@ namespace ConnectFour.Tests
         [ExpectedException(typeof(InvalidOperationException))]
         public void MakeMove_FullColumn_ThrowsException()
         {
-            for (int i = 0; i < Board.Height; i++)
-            {
-                _board.MakeMove(Board.PlayerState.Player1, 0);
-            }
+            for (int i = 0; i < Board.Height; i++) _board.MakeMove(Board.PlayerState.Player1, 0);
             _board.MakeMove(Board.PlayerState.Player1, 0);
         }
 
         [TestMethod]
         public void CheckVictory_HorizontalWin_ReturnsTrue()
         {
-            for (int i = 0; i < Board.WinningLength; i++)
-            {
-                _board.MakeMove(Board.PlayerState.Player1, i);
-            }
+            for (int i = 0; i < Board.WinningLength; i++) _board.MakeMove(Board.PlayerState.Player1, i);
             Assert.IsTrue(_board.CheckVictory(Board.PlayerState.Player1, Board.WinningLength - 1));
         }
 
         [TestMethod]
         public void CheckVictory_VerticalWin_ReturnsTrue()
         {
-            for (int i = 0; i < Board.WinningLength; i++)
-            {
-                _board.MakeMove(Board.PlayerState.Player1, 0);
-            }
+            for (int i = 0; i < Board.WinningLength; i++) _board.MakeMove(Board.PlayerState.Player1, 0);
             Assert.IsTrue(_board.CheckVictory(Board.PlayerState.Player1, 0));
         }
 
@@ -130,12 +113,10 @@ namespace ConnectFour.Tests
         {
             for (int i = 0; i < Board.WinningLength; i++)
             {
-                for (int j = 0; j < i; j++)
-                {
-                    _board.MakeMove(Board.PlayerState.Player2, i);
-                }
+                for (int j = 0; j < i; j++) _board.MakeMove(Board.PlayerState.Player2, i);
                 _board.MakeMove(Board.PlayerState.Player1, i);
             }
+
             Assert.IsTrue(_board.CheckVictory(Board.PlayerState.Player1, Board.WinningLength - 1));
         }
 
@@ -151,23 +132,15 @@ namespace ConnectFour.Tests
         {
             int[][] setup =
             [
-                [2, 1, 0, 0, 0, 0],
-                [2, 1, 2, 1, 2, 0],
-                [1, 2, 1, 2, 2, 2],
-                [1, 2, 1, 1, 2, 0],
-                [1, 1, 2, 1, 0, 0],
-                [2, 1, 1, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0],
+                [2, 1, 0, 0, 0, 0], [2, 1, 2, 1, 2, 0], [1, 2, 1, 2, 2, 2], [1, 2, 1, 1, 2, 0], [1, 1, 2, 1, 0, 0],
+                [2, 1, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0],
             ];
 
             for (int col = 0; col < Board.Width; col++)
             {
                 for (int row = 0; row < setup[col].Length; row++)
                 {
-                    if (setup[col][row] != 0)
-                    {
-                        _board.MakeMove((Board.PlayerState)setup[col][row], col);
-                    }
+                    if (setup[col][row] != 0) _board.MakeMove((Board.PlayerState)setup[col][row], col);
                 }
             }
 
@@ -188,11 +161,9 @@ namespace ConnectFour.Tests
         {
             for (int col = 0; col < Board.Width; col++)
             {
-                for (int row = 0; row < Board.Height; row++)
-                {
-                    _board.MakeMove(Board.PlayerState.Player1, col);
-                }
+                for (int row = 0; row < Board.Height; row++) _board.MakeMove(Board.PlayerState.Player1, col);
             }
+
             Assert.IsTrue(_board.IsFull());
         }
 

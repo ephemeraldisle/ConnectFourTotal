@@ -45,9 +45,5 @@
             Console.Write(new string(' ', Console.WindowWidth));
             return input;
         }
-
-
     }
-
-
 }
