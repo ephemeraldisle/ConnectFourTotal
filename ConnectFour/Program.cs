@@ -489,6 +489,7 @@ namespace ConnectFour
 
         private static bool AITurn()
         {
+            Console.CursorVisible = false;
             int column = _ai.GetBestMove(_board, Board.PlayerState.Player2);
             _lastAIColumn = column;
             _board.AnimateMoveAndPrint(Board.PlayerState.Player2, column);

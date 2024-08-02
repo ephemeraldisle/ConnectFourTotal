@@ -19,6 +19,7 @@ namespace ConnectFour
             Empty,
             Player1,
             Player2,
+            Unplayable,
         }
 
         public const int Width = 7;
@@ -35,8 +36,8 @@ namespace ConnectFour
         [
             (1, 0), // Vertical
             (0, 1), // Horizontal 
-            (1, 1), // Diagonal \
-            (1, -1), // Diagonal /
+            (1, 1), // Diagonal /
+            (1, -1), // Diagonal \
         ];
 
         private readonly PlayerState[,] _boardState = new PlayerState[Height, Width];
